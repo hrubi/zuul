@@ -284,7 +284,7 @@ class TestMultipleGerrits(ZuulTestCase):
             'zuul', 'layout_config',
             'layout-connections-multiple-gerrits.yaml')
 
-    def test_multiple_project_separate_gerrits(self):
+    def test_single_gerrit_pipeline_match(self):
         self.worker.hold_jobs_in_build = True
 
         A = self.fake_another_gerrit.addFakeChange(
@@ -296,6 +296,25 @@ class TestMultipleGerrits(ZuulTestCase):
         self.assertEqual(1, len(self.builds))
         self.assertEqual('project-another-gerrit', self.builds[0].name)
         self.assertTrue(self.job_has_changes(self.builds[0], A))
+
+        self.worker.hold_jobs_in_build = False
+        self.worker.release()
+        self.waitUntilSettled()
+
+    def test_multiple_gerrit_pipeline_match(self):
+        self.worker.hold_jobs_in_build = True
+
+        A = self.fake_review_gerrit.addFakeChange('org/project', 'master', 'A')
+        B = self.fake_another_gerrit.addFakeChange(
+            'org/project', 'master', 'B')
+        self.fake_review_gerrit.addEvent(B.getPatchsetCreatedEvent(1))
+        self.fake_another_gerrit.addEvent(A.getPatchsetCreatedEvent(1))
+
+        self.assertEqual(2, len(self.builds))
+        self.assertEqual('project-review-gerrit', self.builds[0].name)
+        self.assertEqual('project-another-gerrit', self.builds[1].name)
+        self.assertTrue(self.job_has_changes(self.builds[0], A))
+        self.assertTrue(self.job_has_changes(self.builds[1], B))
 
         self.worker.hold_jobs_in_build = False
         self.worker.release()
