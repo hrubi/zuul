@@ -899,6 +899,8 @@ class Change(Changeish):
         self.status = None
         self.owner = None
 
+        self.source_event = None
+
     def _id(self):
         return '%s,%s' % (self.number, self.patchset)
 
@@ -933,6 +935,7 @@ class PullRequest(Change):
     def __init__(self, project):
         super(PullRequest, self).__init__(project)
         self.updated_at = None
+        self.title = None
 
     def isUpdateOf(self, other):
         if (hasattr(other, 'number') and self.number == other.number and
@@ -1048,6 +1051,10 @@ class TriggerEvent(object):
 
 
 class GithubTriggerEvent(TriggerEvent):
+
+    def __init__(self):
+        super(GithubTriggerEvent, self).__init__()
+        self.title = None
 
     def isPatchsetCreated(self):
         return self.type in ['pr-open', 'pr-change']

@@ -95,7 +95,8 @@ class GithubReporter(BaseReporter):
         sha = item.change.patchset
         self.log.debug('Reporting change %s, params %s, merging via API' %
                        (item.change, self.reporter_config))
-        self.connection.mergePull(owner, project, pr_number, sha)
+        message = self._formatMergeMessage(item)
+        self.connection.mergePull(owner, project, pr_number, message, sha)
         item.change.is_merged = True
 
     def setLabels(self, item):
@@ -109,6 +110,19 @@ class GithubReporter(BaseReporter):
                     owner, project, pr_number, label[1:])
             else:
                 self.connection.labelPull(owner, project, pr_number, label)
+
+    def _formatMergeMessage(self, item):
+        message = ''
+        if item.change.title:
+            message += item.change.title
+        account = item.change.source_event.account
+        if account:
+            message += '\n\nMerged-by: '
+            if 'name' in account and 'email' in account:
+                message += '%s <%s>' % (account['name'], account['email'])
+            else:
+                message += account['username']
+        return message
 
 
 def getSchema():
