@@ -118,7 +118,7 @@ class GithubReporter(BaseReporter):
         account = item.change.source_event.account
         if account:
             message += '\n\nReviewed-by: '
-            if 'name' in account and 'email' in account:
+            if account['name'] and account['email']:
                 message += '%s <%s>' % (account['name'], account['email'])
             else:
                 message += account['username']
