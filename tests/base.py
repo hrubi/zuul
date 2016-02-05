@@ -525,7 +525,7 @@ class FakeGithubPullRequest(object):
         self.comments.append(message)
         self._updateTimeStamp()
 
-    def getCommentAddedEvent(self, text):
+    def getCommentAddedEvent(self, text, user='ghuser'):
         name = 'issue_comment'
         data = {
             'action': 'created',
@@ -539,7 +539,7 @@ class FakeGithubPullRequest(object):
                 'full_name': self.project
             },
             'sender': {
-                'login': 'ghuser'
+                'login': user
             }
         }
         return (name, data)
@@ -556,7 +556,7 @@ class FakeGithubPullRequest(object):
             self._updateTimeStamp()
             return self._getLabelEvent(name, 'unlabeled')
 
-    def _getLabelEvent(self, label, action):
+    def _getLabelEvent(self, label, action, user='ghuser'):
         name = 'pull_request'
         data = {
             'action': action,
@@ -578,7 +578,7 @@ class FakeGithubPullRequest(object):
                 'name': label
             },
             'sender': {
-                'login': 'ghuser'
+                'login': user
             }
         }
         return (name, data)
@@ -744,11 +744,14 @@ class FakeGithubConnection(zuul.connection.github.GithubConnection):
         return data
 
     def getUser(self, login):
-        data = {
-            'username': login,
-            'name': 'Github User',
-            'email': 'github.user@example.com'
-        }
+        data = {}
+        data['username'] = login
+        if login == 'ghuser':
+            data['name'] = 'Github User'
+            data['email'] = 'github.user@example.com'
+        else:
+            data['name'] = ''
+            data['email'] = None
         return data
 
     def getGitUrl(self, project):
