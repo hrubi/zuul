@@ -117,7 +117,7 @@ class GithubReporter(BaseReporter):
             message += item.change.title
         account = item.change.source_event.account
         if account:
-            message += '\n\nMerged-by: '
+            message += '\n\nReviewed-by: '
             if 'name' in account and 'email' in account:
                 message += '%s <%s>' % (account['name'], account['email'])
             else:

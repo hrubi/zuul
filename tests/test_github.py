@@ -279,7 +279,7 @@ class TestGithub(ZuulTestCase):
         self.waitUntilSettled()
         self.assertTrue(A.is_merged)
         self.assertEqual(
-            'PR title\n\nMerged-by: Github User <github.user@example.com>',
+            'PR title\n\nReviewed-by: Github User <github.user@example.com>',
             A.merge_message
         )
 
