@@ -283,17 +283,6 @@ class TestGithub(ZuulTestCase):
             A.merge_message
         )
 
-    def test_report_pull_merge_no_userinfo(self):
-        # pipeline merges the pull request on success
-        # github user initiating the merge has no email/name info
-        A = self.fake_github.openFakePullRequest('org/project', 'master',
-                                                 'PR title')
-        self.fake_github.emitEvent(
-            A.getCommentAddedEvent('merge me', user='anon'))
-        self.waitUntilSettled()
-        self.assertTrue(A.is_merged)
-        self.assertEqual('PR title\n\nReviewed-by: anon', A.merge_message)
-
     def test_report_pull_merge_failure(self):
         # pipeline merges the pull request on success
         self.fake_github.merge_failure = True

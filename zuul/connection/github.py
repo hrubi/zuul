@@ -294,6 +294,9 @@ class GithubConnection(BaseConnection):
     def getUser(self, login):
         return GithubUser(self.github, login)
 
+    def getUserUri(self, login):
+        return 'https://%s/%s' % (self.git_host, login)
+
     def commentPull(self, owner, project, pr_number, message):
         pull_request = self.github.issue(owner, project, pr_number)
         pull_request.create_comment(message)

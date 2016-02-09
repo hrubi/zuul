@@ -95,7 +95,7 @@ class GithubReporter(BaseReporter):
         sha = item.change.patchset
         self.log.debug('Reporting change %s, params %s, merging via API' %
                        (item.change, self.reporter_config))
-        message = self._formatMergeMessage(item)
+        message = self._formatMergeMessage(item.change)
         self.connection.mergePull(owner, project, pr_number, message, sha)
         item.change.is_merged = True
 
@@ -111,17 +111,31 @@ class GithubReporter(BaseReporter):
             else:
                 self.connection.labelPull(owner, project, pr_number, label)
 
-    def _formatMergeMessage(self, item):
+    def _formatMergeMessage(self, change):
         message = ''
-        if item.change.title:
-            message += item.change.title
-        account = item.change.source_event.account
-        if account:
-            message += '\n\nReviewed-by: '
-            if account['name'] and account['email']:
-                message += '%s <%s>' % (account['name'], account['email'])
-            else:
-                message += account['username']
+
+        if change.title:
+            message += change.title
+
+        account = change.source_event.account
+        if not account:
+            return message
+
+        username = account['username']
+        name = account['name']
+        email = account['email']
+        message += '\n\nReviewed-by: '
+
+        if name:
+            message += name
+        if email:
+            if name:
+                message += ' '
+            message += '<' + email + '>'
+        if name or email:
+            message += '\n             '
+        message += self.connection.getUserUri(username)
+
         return message
 
 
