@@ -1,0 +1,6 @@
+#!/bin/sh
+
+SOURCE_DIR=$(dirname $(readlink -f $0))
+DOCKER_IMAGE_TAG=zuul-test
+
+docker build -t $DOCKER_IMAGE_TAG -f "${SOURCE_DIR}/Dockerfile" "${SOURCE_DIR}/.."
