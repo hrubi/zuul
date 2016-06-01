@@ -1,0 +1,10 @@
+#!/bin/sh
+
+SOURCE_DIR=$(cd $(dirname "$0"); pwd)
+DOCKER_IMAGE_TAG=zuul-test
+[ -n "$DOCKER_USER_ID" ] || DOCKER_USER_ID=$(id -u)
+
+docker run --rm --tty --interactive \
+    --ulimit nofile=1024:1024 \
+    --volume "${SOURCE_DIR}/..":/zuul \
+    --env LOCAL_USER_ID=$DOCKER_USER_ID $DOCKER_IMAGE_TAG $@
