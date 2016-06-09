@@ -1,18 +1,17 @@
 # Testing in docker
 
-```sh
-./docker/build              # build the container
-./docker/tox -e py26        # run the tox for py26 env in container
-```
-# Testing in docker on Mac
+## Prerequisite
+tox
 
-Find out the user ID of the user running docker inside the boot2docker or
-dockermachine:
+## Set up dox
+
 ```sh
-id -u
+git clone --branch gd-patches https://github.com/hrubi/dox
+tox -c dox/tox.ini -e venv --notest
+source dox/.tox/venv/bin/activate
 ```
 
-Run the tests with right user ID:
+## Run tests
 ```sh
-DOCKER_USER_ID=<UID> ./docker/tox -e py26
+dox
 ```
