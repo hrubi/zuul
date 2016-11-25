@@ -28,6 +28,10 @@ class TestGithub(ZuulTestCase):
     def setup_config(self, config_file='zuul-github.conf'):
         super(TestGithub, self).setup_config(config_file)
 
+    def test_ping_event(self):
+        ret = self.fake_github.emitEvent(self.fake_github.getPingEvent())
+        self.assertEqual(200, ret.getcode())
+
     def test_pull_event(self):
         self.worker.registerFunction('set_description:' +
                                      self.worker.worker_id)
