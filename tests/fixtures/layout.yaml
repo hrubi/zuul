@@ -14,6 +14,20 @@ pipelines:
       gerrit:
         verified: -1
 
+  - name: check-always-report
+    manager: IndependentPipelineManager
+    report-empty: true
+    trigger:
+      gerrit:
+        - event: patchset-created
+    success:
+      gerrit:
+        verified: 1
+    failure:
+      gerrit:
+        verified: -1
+
+
   - name: post
     manager: IndependentPipelineManager
     trigger:
@@ -258,4 +272,8 @@ projects:
 
   - name: org/no-jobs-project
     check:
+      - project-testfile
+
+  - name: org/no-jobs-project2
+    check-always-report:
       - project-testfile
