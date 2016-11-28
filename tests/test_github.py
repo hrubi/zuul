@@ -303,9 +303,16 @@ class TestGithub(ZuulTestCase):
         # pipeline merges the pull request on success
         self.fake_github.merge_failure = True
         A = self.fake_github.openFakePullRequest('org/project', 'master', 'A')
-        self.fake_github.emitEvent(A.getCommentAddedEvent('merge me'))
+        self.fake_github.emitEvent(A.addLabel('merge'))
         self.waitUntilSettled()
+
         self.assertFalse(A.is_merged)
+        self.assertEqual([], A.labels)
+        self.assertTrue('gate' in A.statuses)
+        self.assertEqual('failure', A.statuses['gate']['state'])
+        self.assertEqual(1, len(A.comments))
+        # FIXME - feel free to change the message
+        self.assertEqual('Error when merging pull request', A.comments[0])
         self.fake_github.merge_failure = False
 
     def test_report_pull_merge_not_allowed_once(self):
