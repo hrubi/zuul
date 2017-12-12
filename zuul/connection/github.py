@@ -271,6 +271,7 @@ class GithubConnection(BaseConnection):
         token = self.connection_config.get('api_token', None)
         if token is not None:
             self.github = github3.login(token=token)
+            logging.getLogger('github3').setLevel(logging.DEBUG)
             self.log.info("Github API Authentication successful.")
         else:
             self.github = None
