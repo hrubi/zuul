@@ -35,12 +35,6 @@ install:
 clean:
 	rm -rf $(SOURCES) $(PIP_DEPS_DIR) $(VENV_DIR)
 
-.PHONY: test-logging
-test-logging:
-	rm -f integration/.test/log/*
-	tox -e venv -- timeout --preserve-status 10 zuul-server -c integration/config/zuul.conf -d
-	grep -F 'zuul.GithubConnection' integration/.test/log/zuul.log
-
 .PHONY: check
 check: build.state
 	$(VENV_ACTIVATE) && \
